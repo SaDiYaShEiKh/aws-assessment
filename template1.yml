@@ -1,0 +1,130 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: #String
+
+Metadata:
+  #template metadata
+
+Parameters:
+  #set of parameters
+
+Mappings:
+  #set of mappings
+
+Conditions:
+  #set of conditions
+
+Transform:
+  #set of transforms
+
+Resources:
+  #set of resources
+  myshopVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.10.0.0/16
+      EnableDnsSupport: true
+      Tags:
+        - Key: name
+          Value: hexavpc
+  shop-subnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId:
+        Ref: myshopVPC
+      CidrBlock: 10.10.1.0/24
+      AvailabilityZone: "ap-south-1a"
+      Tags:
+      - Key: name
+        Value: public-shop-sub
+  shopsg:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow client to shop
+      VpcId:
+        Ref: myshopVPC
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: 8080
+        ToPort: 8080
+        CidrIp: 0.0.0.0/0
+      SecurityGroupEgress:
+      - IpProtocol: tcp
+        FromPort: 22
+        ToPort: 22
+        CidrIp: 183.83.73.244/32
+  shopigw:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: name
+          Value: shop
+  AttachshopGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId:
+        Ref: myshopVPC
+      InternetGatewayId:
+        Ref: shopigw
+  shoprt:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: 
+        Ref: myshopVPC
+      Tags:
+        - Key: name
+          Value: shoprt
+  myshopRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId:
+        Ref: shoprt
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId:
+        Ref: shopigw
+  myshopSubRTAssoc:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId:
+        Ref: shop-subnet1
+      RouteTableId:
+        Ref: myshopRoute
+  shopec2:
+    Type: "AWS::EC2::Instance"
+    Properties:
+      AvailabilityZone: "ap-south-1a"
+      ImageId: ami-0fb2cc4fedc3989d3
+      InstanceType: t2.small
+      KeyName: first_key
+      SecurityGroupIds:
+        - sg-07c57cd07b43f5552
+      SecurityGroups:
+        - String
+      SubnetId: subnet-0e1a58cda294d74aa
+      UserData: String
+      Volumes:
+        - Volume
+  MyshopEC2Instance: 
+      Type: AWS::EC2::Instance
+      Properties:
+        AvailabilityZone: "ap-south-1a"
+        ImageId: "ami-0fb2cc4fedc3989d3"
+        InstanceType: t2.small
+        KeyName: "first_key"
+        SecurityGroupIds:
+          - sg-07c57cd07b43f5552
+        SubnetId: subnet-0e1a58cda294d74aa
+        count: 1
+        NetworkInterfaces: [
+            {
+                AssociatePublicIpAddress: true,
+                DeleteOnTermination: true,
+                DeviceIndex: "0",
+                SubnetId: "subnet-0e1a58cda294d74aa",
+                GroupSet: [
+                    "sg-07c57cd07b43f5552"
+                ]
+            }
+        ]
+Outputs:
+  #set of outputs

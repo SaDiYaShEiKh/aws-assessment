@@ -1,0 +1,33 @@
+sudo apt-get update -y
+sudo apt-get upgrade -y
+sudo add-apt-repository ppa:webupd8team/java
+sudo apt-get update -y
+sudo apt-get install oracle-java8-installer
+java -version
+cd /opt/
+sudo wget http://www-eu.apache.org/dist/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.tar.gz
+sudo tar -xvzf apache-maven-3.3.9-bin.tar.gz
+sudo apt install maven -y
+ls
+mvn --version
+sudo apt install git -y
+git clone https://github.com/shopizer-ecommerce/shopizer.git
+cd shopizer
+mvn clean install
+ls
+cd sm-shop
+mvn spring-boot:run
+--------------------------------------------------------------------------------------------------------------------
+cd /opt/
+wget --no-cookies --no-check-certificate --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie" "https://download.oracle.com/otn-pub/java/jdk/8u201-b09/42970487e3af4f5aa5bca3f542482c60/jdk-8u201-linux-x64.tar.gz"
+tar xzf jdk-8u201-linux-x64.tar.gz
+cd jdk1.8.0_201/
+alternatives --install /usr/bin/java java /opt/jdk1.8.0_201/bin/java 2
+alternatives --config java
+or
+yum install java-1.8.0-openjdk
+sudo vi /etc/environment
+export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.201.b09-2.el7_6.x86_64
+sudo source /etc/environment
+
+
